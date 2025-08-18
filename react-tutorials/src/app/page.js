@@ -1,7 +1,7 @@
 const Home = () => {
   return (
     <div className="bg-white w-full h-screen flex justify-center items-center text-white">
-      <div className=" bg-gray-800 border border-white rounded-3xl p-10">
+      <div className=" bg-orange-600 border border-white rounded-3xl p-10">
         <h3 className=" text-indigo-400 font-semibold">Enterprice</h3>
         <p className="mt-4 font-semibold text-white text-5xl flex gap-2 items-end">
           $99<span className="text-gray-400 text-base">/month</span>
