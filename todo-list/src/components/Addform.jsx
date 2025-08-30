@@ -18,7 +18,7 @@ export const Addform = ({ setTodos }) => {
       isDone: false,
     };
 
-    setTodos((prev) => [...prev, newTodos]);
+    setTodos((prev) => [newTodos, ...prev]);
     setInputValue("");
   };
   return (
