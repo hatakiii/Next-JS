@@ -13,24 +13,12 @@ export const BasicForm = ({ form, onChange, onChangeStep }) => {
     }
 
     const mnPhoneRegex = /^\d{8}$/;
-
     if (mnPhoneRegex.test(form.phone)) {
       newErrors.phone = null;
     } else {
       newErrors.phone = "Wrong number";
     }
 
-    if (form.email === "") {
-      newErrors.email = "You must enter your email";
-    } else {
-      newErrors.email = null;
-    }
-
-    if (form.phone === "") {
-      newErrors.phone = "You must enter your phone number";
-    } else {
-      newErrors.phone = null;
-    }
     setErrors(newErrors);
     console.log(newErrors);
 
