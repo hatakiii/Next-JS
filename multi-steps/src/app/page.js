@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { BasicForm } from "@/components/BasicForm";
+import ReactiveButton from "reactive-button";
+import { motion, AnimatePresence } from "motion/react";
 
 export default function Home() {
   const [step, setStep] = useState("basic"); // image, complete
@@ -18,8 +20,18 @@ export default function Home() {
     console.log(form);
     //Last:submit to backend
   }
+  const gotoNext = () => {
+    setStep("complete");
+  };
   if (step === "basic") {
-    return <BasicForm form={form} onChange={setForm} onChangeStep={setStep} />;
+    return (
+      <AnimatePresence>
+        {step === "basic" && (
+          <BasicForm form={form} onChange={setForm} onChangeStep={setStep} />
+        )}
+        ;
+      </AnimatePresence>
+    );
   }
   if (step === "image") {
     return (
@@ -32,11 +44,17 @@ export default function Home() {
           Back
         </button>
         <button
-          onClick={() => setStep("complete")}
+          onClick={gotoNext}
           className="bg-sky-800 text-white p-4 rounded-2xl hover:bg-sky-400 hover:text-black"
         >
           Continue
         </button>
+        <ReactiveButton
+          idleText="Submit"
+          loadingText="Loading"
+          successText="Done"
+          onClick={gotoNext}
+        />
       </div>
     );
   }
