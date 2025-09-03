@@ -1,8 +1,15 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { InputField, Button } from "@/components";
 
 export const BasicForm = ({ form, onChange, onChangeStep }) => {
   const [errors, setErrors] = useState({});
+
+  function handleImageChange(e) {
+    return;
+  }
+  // gertee ochood 25 minutaas hoishoo sonsono
+
   function goToNext() {
     const newErrors = {};
 
@@ -36,35 +43,41 @@ export const BasicForm = ({ form, onChange, onChangeStep }) => {
         animate={{ opacity: 1, right: 0 }}
         exit={{ opacity: 0, right: 30 }}
       >
-        <div className="mb-4">
-          Email <br />
+        <InputField
+          label="Email"
+          value={form.email}
+          onChange={(e) =>
+            onChange({
+              ...form,
+              email: e.target.value,
+            })
+          }
+          error={errors.email}
+        />
+        <InputField
+          label="Phone number"
+          value={form.phone}
+          onChange={(e) =>
+            onChange({
+              ...form,
+              phone: e.target.value,
+            })
+          }
+          error={errors.phone}
+        />
+        <div className="my-5 bg-gray-400 h-40 flex items-center justify-center relative">
+          Add image
           <input
-            className="border bg-amber-400"
-            value={form.email}
-            onChange={(e) =>
-              onChange({
-                ...form,
-                email: e.target.value,
-              })
-            }
+            type="file"
+            className="absolute opacity-0 inset-0"
+            onChange={handleImageChange}
           />
-          {errors.email && <div className="text-red-500">{errors.email}</div>}
-        </div>
-        <div className="mb-4">
-          Phone number <br />
-          <input
-            className="border bg-amber-400"
-            value={form.phone}
-            onChange={(e) =>
-              onChange({
-                ...form,
-                phone: e.target.value,
-              })
-            }
-          />
-          {errors.phone && <div className="text-red-500">{errors.phone}</div>}
         </div>
         <div>
+          <Button onClick={goToNext} variant="primary">
+            Continue
+          </Button>
+          <Button variant="secondary">Continue</Button>
           <button
             onClick={goToNext}
             className="bg-sky-800 text-white p-4 rounded-2xl hover:bg-sky-400 hover:text-black"
