@@ -7,10 +7,16 @@ import { motion, AnimatePresence } from "motion/react";
 
 export default function Home() {
   const [step, setStep] = useState("basic"); // image, complete
-  const [form, setForm] = useState({
-    email: "",
-    phone: "",
-  });
+  const localForm =
+    typeof window !== "undefined" ? localStorage.getItem("my-form") : null;
+  const [form, setForm] = useState(
+    localForm
+      ? JSON.parse(localForm)
+      : {
+          email: "",
+          phone: "",
+        }
+  );
 
   function submit() {
     setStep("image");
