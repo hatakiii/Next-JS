@@ -4,13 +4,17 @@ import { InputField, Button } from "@/components";
 
 export const BasicForm = ({ form, onChange, onChangeStep }) => {
   const [errors, setErrors] = useState({});
+  const [preview, setPreview] = useState();
 
   function handleImageChange(e) {
-    return;
+    const file = e.target.files[0];
+    const filePreview = URL.createObjectURL(file);
+    setPreview(filePreview);
   }
-  // gertee ochood 25 minutaas hoishoo sonsono
 
   function goToNext() {
+    localStorage.setItem("myForm", "Hello World");
+
     const newErrors = {};
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -31,6 +35,7 @@ export const BasicForm = ({ form, onChange, onChangeStep }) => {
     console.log(newErrors);
 
     if (!newErrors.email && !newErrors.phone) {
+      localStorage.setItem("my-form", JSON.stringify(form));
       onChangeStep("image");
     }
   }
@@ -65,14 +70,22 @@ export const BasicForm = ({ form, onChange, onChangeStep }) => {
           }
           error={errors.phone}
         />
-        <div className="my-5 bg-gray-400 h-40 flex items-center justify-center relative">
+
+        <div className="my-5 bg-gray-400 h-40 overflow-hidden flex items-center justify-center relative">
           Add image
+          {preview && (
+            <img
+              src={preview}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          )}
           <input
             type="file"
             className="absolute opacity-0 inset-0"
             onChange={handleImageChange}
           />
         </div>
+
         <div>
           <Button onClick={goToNext} variant="primary">
             Continue
