@@ -35,7 +35,7 @@ export default function Home() {
         {step === "basic" && (
           <BasicForm form={form} onChange={setForm} onChangeStep={setStep} />
         )}
-        ;
+        ;<div>hello</div>
       </AnimatePresence>
     );
   }
