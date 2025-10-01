@@ -7,7 +7,7 @@ const port = 3000;
 
 // const cors = require("cors");
 
-const tasks = [
+let tasks = [
   { id: "10154", name: "Mop the floor" },
   { id: "15740", name: "Wipe out dust" },
 ];
@@ -28,6 +28,10 @@ app.get("/tasks", (req: Request, res: Response) => {
 app.post("/tasks", (req: Request, res: Response) => {
   const id = nanoid();
   const { name } = req.body;
+  if (!name) {
+    res.status(400).send({ message: "name is required" });
+    return;
+  }
   tasks.unshift({ id, name });
   res.status(201).send({ id });
 });
@@ -35,13 +39,20 @@ app.post("/tasks", (req: Request, res: Response) => {
 app.delete("/tasks/:id", (req: Request, res: Response) => {
   const id = req.params.id;
   //fetch all tasks
-  res.send([]);
+  console.log({ id });
+  const newTasks = tasks.filter((task) => task.id !== id);
+  tasks = newTasks;
+
+  res.sendStatus(204); // No content
 });
 
 app.put("/tasks/:id", (req: Request, res: Response) => {
   const id = req.params.id;
+  const { name } = req.body;
   //fetch all tasks
-  res.send([]);
+  const index = tasks.findIndex((task) => task.id === id);
+  tasks[index].name = name;
+  res.sendStatus(204);
 });
 
 app.listen(port, () => {
