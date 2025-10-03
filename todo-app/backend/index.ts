@@ -22,7 +22,7 @@ function getTasks() {
   return tasks;
 }
 
-function writeTasks(tasks: { id: string; name: string }) {
+function writeTasks(tasks: { id: string; name: string; isCompleted: boolean }) {
   fs.writeFile("data.txt", JSON.stringify(tasks), (err) => {
     if (err) {
       console.error(err);
@@ -35,8 +35,18 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.get("/tasks", (req: Request, res: Response) => {
+  const { status } = req.query;
   const tasks = getTasks();
-  res.send(tasks);
+  const filteredTasks = tasks.filter((task: { isCompleted: boolean }) => {
+    if (status === "All") {
+      return true;
+    } else if (status === "Active") {
+      return !task.isCompleted;
+    } else {
+      return task.isCompleted;
+    }
+  });
+  res.send(filteredTasks);
 });
 
 app.post("/tasks", (req: Request, res: Response) => {
@@ -49,7 +59,7 @@ app.post("/tasks", (req: Request, res: Response) => {
   }
 
   const tasks = getTasks();
-  tasks.unshift({ id, name });
+  tasks.unshift({ id, name, isCompleted: false });
   writeTasks(tasks);
 
   res.status(201).send({ id });
@@ -75,6 +85,23 @@ app.put("/tasks/:id", (req: Request, res: Response) => {
   }
 
   tasks[index].name = name;
+  writeTasks(tasks);
+
+  res.sendStatus(204);
+});
+
+app.patch("/tasks/:id/check", (req: Request, res: Response) => {
+  const id = req.params.id;
+
+  const tasks = getTasks();
+
+  const index = tasks.findIndex((task: { id: string }) => task.id === id);
+  if (index === -1) {
+    res.status(404).send({ message: "Task not found" });
+    return;
+  }
+
+  tasks[index].isCompleted = !tasks[index].isCompleted;
   writeTasks(tasks);
 
   res.sendStatus(204);
