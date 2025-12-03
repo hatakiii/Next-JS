@@ -2,37 +2,35 @@
 
 import { useEffect, useState } from "react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import useSWR, { useSWRConfig } from "swr";
+
+import { Newtask } from "./Newtask";
 type TaskType = { id: string; name: string; isCompleted: boolean };
 
+export async function fetcher(path: string) {
+  const data = await fetch(`http://localhost:3000${path}`).then((res) =>
+    res.json()
+  );
+  return data;
+}
+
 export default function Home() {
-  const [newTask, setNewTask] = useState("");
-  const [tasks, setTasks] = useState<TaskType[]>([]);
+  // const [tasks, setTasks] = useState<TaskType[]>([]);
   const [status, setStatus] = useState("All");
 
-  useEffect(() => {
-    loadTasks();
-  }, [status]);
+  const { data: tasks, isLoading } = useSWR(`/tasks?status=${status}`, fetcher);
 
-  async function createNewTasks() {
-    await fetch("http://localhost:3000/tasks", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name: newTask }),
-    });
+  // useEffect(() => {
+  //   loadTasks();
+  // }, [status]);
 
-    loadTasks();
-    setNewTask("");
-  }
-
-  function loadTasks() {
-    fetch(`http://localhost:3000/tasks?status=${status}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setTasks(data);
-      });
-  }
+  // function loadTasks() {
+  //   fetch(`http://localhost:3000/tasks?status=${status}`)
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       setTasks(data);
+  //     });
+  // }
 
   async function deleteTask(id: string) {
     if (confirm("Are you sure?")) {
@@ -40,7 +38,7 @@ export default function Home() {
       await fetch(`http://localhost:3000/tasks/${id}`, {
         method: "DELETE",
       });
-      loadTasks();
+      // loadTasks();
     }
   }
 
@@ -48,7 +46,7 @@ export default function Home() {
     await fetch(`http://localhost:3000/tasks/${id}/check`, {
       method: "PATCH",
     });
-    loadTasks();
+    // loadTasks();
   }
 
   async function editTask(task: TaskType) {
@@ -61,7 +59,7 @@ export default function Home() {
         },
         body: JSON.stringify({ name: newName }),
       });
-      loadTasks();
+      // loadTasks();
     }
   }
 
@@ -74,27 +72,11 @@ export default function Home() {
   //     return task.isCompleted;
   //   }
   // });
+  if (isLoading) return <div className="text-center py-12">Loading...</div>;
 
   return (
     <div className="max-w-xl mx-auto p-6 space-y-6">
-      {/* Input Field + Add Button */}
-      <div className="flex gap-4">
-        <input
-          type="text"
-          placeholder="Enter a new task..."
-          className="input input-bordered w-full"
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-        />
-        <button
-          className="btn btn-accent gap-2"
-          disabled={!newTask}
-          onClick={createNewTasks}
-        >
-          <FaPlus />
-          Add
-        </button>
-      </div>
+      <Newtask status={status} />
 
       <div role="tablist" className="tabs tabs-box mt-4">
         {["All", "Active", "Completed"].map((x) => (
